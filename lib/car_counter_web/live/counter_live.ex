@@ -17,19 +17,12 @@ defmodule CarCounterWeb.CounterLive do
      )}
   end
 
-  # def render(assigns) do
-  #   ~L"""
-  #     <h1>Current Count <%= @count %></h1>
-  #     <button phx-click="reverse">Reverse</button>
-  #   """
-  # end
-
   def handle_info(:tick, socket = %{assigns: %{up: true}}) do
-    {:noreply, inc(socket)}
+    {:noreply, adjust(socket, &Kernel.+/2)}
   end
 
   def handle_info(:tick, socket = %{assigns: %{up: false}}) do
-    {:noreply, dec(socket)}
+    {:noreply, adjust(socket, &Kernel.-/2)}
   end
 
   def handle_event("reverse", _, socket) do
@@ -49,17 +42,14 @@ defmodule CarCounterWeb.CounterLive do
     {:noreply, socket}
   end
 
-  defp inc(socket = %{assigns: %{counters: counters}}) do
-    counters
-    |> Enum.map(fn counter ->
-      %{counter | count: counter.count + 1}
-    end)
+  defp adjust(socket = %{assigns: %{counters: counters}}, operator) do
+    counters =
+      counters
+      |> Enum.map(fn counter ->
+        %{counter | count: operator.(counter.count, 1)}
+      end)
 
     assign(socket, counters: counters)
-  end
-
-  defp dec(socket) do
-    assign(socket, count: socket.assigns.count - 1)
   end
 
   defp validate(socket, params) do
@@ -67,6 +57,11 @@ defmodule CarCounterWeb.CounterLive do
     assign(socket, changeset: changeset)
   end
 
-  defp save(socket, params) do
+  defp save(socket, %{"name" => name, "count" => count}) do
+    assign(socket,
+      counters: [
+        %CounterFormData{name: name, count: String.to_integer(count)} | socket.assigns.counters
+      ]
+    )
   end
 end

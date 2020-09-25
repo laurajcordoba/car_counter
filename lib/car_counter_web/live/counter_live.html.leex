@@ -1,6 +1,9 @@
 <%= for counter <- @counters do %>
   <h1><%= counter.name %>: <%= counter.count %></h1>
 <% end %>
+<p>
+  <button phx-click="reverse">Reverse</button>
+</p>
 
 <%= f = form_for @changeset, "#", phx_change: "validate", phx_submit: "save", as: :form %>
   <%= label f, :name %>
