@@ -1,5 +1,9 @@
 <%= for counter <- @counters do %>
-  <h1><%= counter.name %>: <%= counter.count %></h1>
+  <h1>
+    <%= counter.name %>: <%= counter.count %>
+    <a href="#" phx-click="delete" phx-value-counter-name="<%= counter.name %>">Delete</a>
+  </h1>
+
 <% end %>
 <p>
   <button phx-click="reverse">Reverse</button>

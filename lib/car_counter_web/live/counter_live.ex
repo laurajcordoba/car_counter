@@ -37,6 +37,10 @@ defmodule CarCounterWeb.CounterLive do
     {:noreply, save(socket, params)}
   end
 
+  def handle_event("delete", params, socket) do
+    {:noreply, delete(socket, params)}
+  end
+
   def handle_event("boom", _, socket) do
     _ = 1 / 0
     {:noreply, socket}
@@ -62,6 +66,12 @@ defmodule CarCounterWeb.CounterLive do
       counters: [
         %CounterFormData{name: name, count: String.to_integer(count)} | socket.assigns.counters
       ]
+    )
+  end
+
+  defp delete(socket, %{"counter-name" => counter_name}) do
+    assign(socket,
+      counters: Enum.reject(socket.assigns.counters, fn item -> item.name == counter_name end)
     )
   end
 end
