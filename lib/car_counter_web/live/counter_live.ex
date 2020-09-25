@@ -12,6 +12,7 @@ defmodule CarCounterWeb.CounterLive do
     {:ok,
      assign(socket,
        counters: [%CounterFormData{name: "Initial", count: 13}],
+       counters_count: 1,
        up: true,
        changeset: changeset
      )}
@@ -65,13 +66,15 @@ defmodule CarCounterWeb.CounterLive do
     assign(socket,
       counters: [
         %CounterFormData{name: name, count: String.to_integer(count)} | socket.assigns.counters
-      ]
+      ],
+      counters_count: socket.assigns.counters_count + 1
     )
   end
 
   defp delete(socket, %{"counter-name" => counter_name}) do
     assign(socket,
-      counters: Enum.reject(socket.assigns.counters, fn item -> item.name == counter_name end)
+      counters: Enum.reject(socket.assigns.counters, fn item -> item.name == counter_name end),
+      counters_count: socket.assigns.counters_count - 1
     )
   end
 end
